@@ -1,13 +1,14 @@
 import java.awt.*;
 import javax.swing.JPanel;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 
 public class TreeComponent extends JPanel
 {
     private final int PANEL_WIDTH = 400;
     private final int PANEL_HEIGHT = 400;
 
-    private final double ANGLE = Math.PI/3;
+    private final double ANGLE = Math.PI / 3;
     private final double RAND = 1/5;
     
     private final int TOPX = 200, TOPY = 20;
@@ -32,16 +33,20 @@ public class TreeComponent extends JPanel
     //  intermediate points are computed, and each line segment is
     //  drawn as a fractal.
     //-----------------------------------------------------------------
-    public void drawFractal (int order, int x, int y, int endX, int endY, int length, Graphics page)
+    public void drawFractal (int order, int x, int y, int endX, int endY, int length, int width, Graphics page)
     {
         Graphics2D g2 = (Graphics2D) page;
-
+        
+        
+        
         if (order == 1)
         {
-            return
+            return;
         }
         else
         {
+            int dx, dy, dr;
+            int dist = (int) Point2D.distance(x, y, endX, endY);
             
         }
     }
@@ -53,12 +58,8 @@ public class TreeComponent extends JPanel
     public void paintComponent (Graphics page)
     {
         super.paintComponent (page);
-
+        
         page.setColor (Color.green);
-
-        drawFractal (current, TOPX, TOPY, LEFTX, LEFTY, page);
-        drawFractal (current, LEFTX, LEFTY, RIGHTX, RIGHTY, page);
-        drawFractal (current, RIGHTX, RIGHTY, TOPX, TOPY, page);
     }
 
     //-----------------------------------------------------------------
