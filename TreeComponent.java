@@ -1,19 +1,25 @@
 import java.awt.*;
 import javax.swing.JPanel;
 import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
 
 public class TreeComponent extends JPanel
 {
-    private final int PANEL_WIDTH = 400;
-    private final int PANEL_HEIGHT = 400;
+    private final int PANEL_WIDTH = 800;
+    private final int PANEL_HEIGHT = 800;
 
-    private final double ANGLE = Math.PI / 3;
-    private final double RAND = 1/5;
-    
-    private final int TOPX = 200, TOPY = 20;
-    private final int LEFTX = 60, LEFTY = 300;
-    private final int RIGHTX = 340, RIGHTY = 300;
+    private final double INITIAL_ANGLE = Math.PI / 2;
+    private final double INITIAL_X = 400;
+    private final double INITIAL_Y = 700;
+    private final double INITIAL_LENGTH = 220;
+    private final double CHANGE_IN_ANGLE = Math.PI / 8;
+    private final double PERCENT_CHANGE_IN_LENGTH = .75;
+
+    private final Color BLUE = new Color(101, 152, 244);
+    private final Color LIGHT_BLUE = new Color(181, 212, 222);
+    private final Color DARK_BLUE = new Color(16, 75, 141);
+    private final int BLUE_INDICATOR = 1;
+    private final int LIGHT_BLUE_INDICATOR = 2;
+    private final int DARK_BLUE_INDICATOR = 3;
 
     private int current; //current order
 
@@ -23,7 +29,7 @@ public class TreeComponent extends JPanel
     public TreeComponent (int currentOrder)
     {
         current = currentOrder;
-        setBackground (Color.white);
+        setBackground (Color.BLACK);
         setPreferredSize (new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
     }
 
@@ -33,21 +39,45 @@ public class TreeComponent extends JPanel
     //  intermediate points are computed, and each line segment is
     //  drawn as a fractal.
     //-----------------------------------------------------------------
-    public void drawFractal (int order, int x, int y, int endX, int endY, int length, int width, Graphics page)
+    public void drawFractal (double x, double y, double angle, double length, Graphics g)
     {
-        Graphics2D g2 = (Graphics2D) page;
-        
-        
-        
-        if (order == 1)
+        Graphics2D g2 = (Graphics2D) g;
+
+        if (length < 1)
         {
             return;
         }
         else
         {
-            int dx, dy, dr;
-            int dist = (int) Point2D.distance(x, y, endX, endY);
-            
+            if(length < 220)
+            {
+                int rand = (int) (Math.random() * 3) + 1;
+                if(rand == BLUE_INDICATOR)
+                {
+                    g.setColor(BLUE);
+                }
+                else if(rand == LIGHT_BLUE_INDICATOR)
+                {
+                    g.setColor(LIGHT_BLUE);
+                }
+                else if(rand == DARK_BLUE_INDICATOR)
+                {
+                    g.setColor(DARK_BLUE);
+                }
+            }
+
+            double newLength;
+            newLength = length * PERCENT_CHANGE_IN_LENGTH;
+
+            double dx, dy;
+            dx = x + (newLength * Math.cos(angle));
+            dy = y - (newLength * Math.sin(angle));
+
+            Line2D.Double line = new Line2D.Double(x, y, dx, dy);
+            g2.draw(line);
+
+            drawFractal(dx, dy, angle - CHANGE_IN_ANGLE, newLength, g);
+            drawFractal(dx, dy, angle + CHANGE_IN_ANGLE, newLength, g);
         }
     }
 
@@ -55,26 +85,10 @@ public class TreeComponent extends JPanel
     //  Performs the initial calls to the drawFractal method.
     //-----------------------------------------------------------------
     @Override
-    public void paintComponent (Graphics page)
+    public void paintComponent (Graphics g)
     {
-        super.paintComponent (page);
-        
-        page.setColor (Color.green);
-    }
-
-    //-----------------------------------------------------------------
-    //  Sets the fractal order to the value specified.
-    //-----------------------------------------------------------------
-    public void setOrder (int order)
-    {
-        current = order;
-    }
-
-    //-----------------------------------------------------------------
-    //  Returns the current order.
-    //-----------------------------------------------------------------
-    public int getOrder ()
-    {
-        return current;
+        super.paintComponent (g);
+        g.setColor(Color.WHITE);
+        drawFractal(INITIAL_X, INITIAL_Y, INITIAL_ANGLE, INITIAL_LENGTH, g);
     }
 }
